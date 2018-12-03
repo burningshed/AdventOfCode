@@ -18,7 +18,7 @@ while notDone:
 
         Freq = freqSolver(Freq, CurChange)
         if Freq in FreqSet:
-            print("Found! Freq = {}". format(Freq)):w
+            print("Found! Freq = {}". format(Freq))
 
             notDone = False
             break
