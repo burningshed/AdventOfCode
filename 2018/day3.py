@@ -1,4 +1,3 @@
-import os
 """
 Day 3
 of adventofcode
@@ -14,7 +13,7 @@ class Lister(dict):
 Fabric = Counter()
 Claims = Lister()
 posAns = set()
-RawInput = open("/home/rcw/projects/python/adventofcode/2018/day3/input", 'r')
+RawInput = open("./day3/input", 'r')
 for line in RawInput:
     claim = line.split()
     posAns.add(claim[0])
