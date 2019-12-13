@@ -56,4 +56,3 @@ for item in Xing:
         if (curTime < lowTime) and (curTime != 0):
             lowTime = curTime
 print("Answer to Part 2: {}".format(lowTime))
-
