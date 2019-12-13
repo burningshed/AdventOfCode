@@ -206,13 +206,38 @@ def check_pass(password):
     if no chain of length 2, returns False
     if chain of exactly 2, returns True
     """
-    
-    # return or repeat
+    # big_chain : length of longest chain of repeated symbols
+    # c_start : index at which big_chain starts
+    big_chain = 0
+    cur_loc = 0
+    for symb in password:
+        if big_chain == 0:
+            l_symb = symb
+            cur_chain = 1
+            big_chain = 1
+            c_start = 0
+            cur_c = cur_loc
+            cur_loc += 1
+            continue
+        if symb == l_symb:
+            cur_chain += 1
+        else:
+            cur_chain = 1
+            cur_c = cur_loc
+        if cur_chain > big_chain:
+            big_chain = cur_chain
+            c_start = cur_c
+        cur_loc += 1
+        l_symb = symb
+
+    # return or repeat, need big_chain, c_start
     if big_chain < 2:
         return False
     if big_chain == 2:
         return True
-    return check_pass(password[:c_start]) or check_pass(password[c_end:])
+    return (check_pass(password[:c_start])
+            or check_pass(password[c_start+big_chain:]))
+
 
 def day4_part2(p1_ans):
     # for each password
@@ -220,11 +245,29 @@ def day4_part2(p1_ans):
     # - if 2, done, password is good
     # - if >2, repeat with substrings before and after chain
     # - if either result passes, password passes
+    p1_ans = [str(x) for x in p1_ans]
+    p2_ans = []
+    for pword in p1_ans:
+        if check_pass(pword):
+            p2_ans.append(pword)
+    return p2_ans
 
 
-print("Part 1 Answer: ", len(day4_part1(PUZZLE_INPUT_STR)))
+def testd4p2():
+    TestInput = [
+        "112233",
+        "123444",
+        "111122",
+        "122233",
+        "222222",
+        "112222",
+        "111345"
+    ]
+    test_ans = day4_part2(TestInput)
+    print(test_ans)
 
 
-
-
+d4p1 = day4_part1(PUZZLE_INPUT_STR)
+print("Part 1 Answer: ", len(d4p1))
+print("Part 2 Answer: ", len(day4_part2(d4p1)))
 
