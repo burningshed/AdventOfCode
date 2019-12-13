@@ -195,34 +195,10 @@ def tests_Part1(test='a'):
 
 def day1_part1(bounds):
     D1 = passgen(bounds)
-    print(len(D1[1]))
+    return D1[1]
 
 
-day1_part1(PUZZLE_INPUT_STR)
+print(len(day1_part1(PUZZLE_INPUT_STR)))
 
 
-def passgen_step_p2(bounds, unconf_keys, conf_keys=[]):
-    """
-    min_val/max_val are the lower and upper bounds of possible passwords
-    conf_keys are passwords known to be valid (contain a repeated pair)
-    unconf_keys might be valid - but do not yet have a repeated pair
-
-    p2 calls a modified conf/unconf keys looking for series of digits
-    repeated more then twice
-    """
-    # Generate digit class from unconfirmed keys
-    D1 = Password_Digit_LR(unconf_keys, POSS_DIGITS)
-    D1.trim_range(*bounds)
-    D1.trim_decreasing_digits()
-    # if confirmed keys exist, generate digit class from those
-    if conf_keys != []:
-        CD1 = Password_Digit_LR(conf_keys, POSS_DIGITS)
-        CD1.trim_range(*bounds)
-        CD1.trim_decreasing_digits()
-        conf_pass = CD1.get_next_keys()
-    else:
-        conf_pass = []
-    unconf_pass = D1.get_next_unconf_keys()
-    conf_pass.extend(D1.get_next_conf_keys())
-    return unconf_pass, conf_pass
 
