@@ -188,17 +188,43 @@ def tests_Part1(test='a'):
         D3 = passgen(testBounds)
         print(D3[1])
     if test in 'a5':
-        testBounds = ("14444","56431")
+        testBounds = ("14444", "56431")
         D1 = passgen(testBounds)
         print(len(D1[1]))
 
 
-def day1_part1(bounds):
+def day4_part1(bounds):
     D1 = passgen(bounds)
     return D1[1]
 
+def check_pass(password):
+    """
+    checks password for chains of repeated characters
+    if any chain is greater then 2, returns result of
+    surrounding substrings.
 
-print(len(day1_part1(PUZZLE_INPUT_STR)))
+    if no chain of length 2, returns False
+    if chain of exactly 2, returns True
+    """
+    
+    # return or repeat
+    if big_chain < 2:
+        return False
+    if big_chain == 2:
+        return True
+    return check_pass(password[:c_start]) or check_pass(password[c_end:])
+
+def day4_part2(p1_ans):
+    # for each password
+    # - find longest chain
+    # - if 2, done, password is good
+    # - if >2, repeat with substrings before and after chain
+    # - if either result passes, password passes
+
+
+print("Part 1 Answer: ", len(day4_part1(PUZZLE_INPUT_STR)))
+
+
 
 
 
