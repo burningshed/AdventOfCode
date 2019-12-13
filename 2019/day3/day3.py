@@ -35,6 +35,25 @@ for wire in wires:
     for stage in wire:
         dvec = D_key[stage[0]]*int(stage[1:])
         paths[-1].move(dvec)
-for path in paths:
-    print(path.get_cloc)
+Xing = paths[0].findXsections(paths[1])
+mhDists = []
+lowDist = 0
+for item in Xing:
+    mhDists.append(item.mh_dist())
+    if lowDist == 0:
+        lowDist = item.mh_dist()
+    else:
+        if (item.mh_dist() < lowDist) and (item.mh_dist != 0):
+            lowDist = item.mh_dist()
+print("Answer to Part 1: {}".format(lowDist))
+lowTime = 0
+for item in Xing:
+    curTime = (paths[0].get_time_to_point(item)
+               + paths[1].get_time_to_point(item))
+    if lowTime == 0:
+        lowTime = curTime
+    else:
+        if (curTime < lowTime) and (curTime != 0):
+            lowTime = curTime
+print("Answer to Part 2: {}".format(lowTime))
 

@@ -30,6 +30,15 @@ class GridPoint:
         return "({},{})".format(self.x, self.y)
     def __round__(self):
         return GridPoint(int(round(self.x)), int(round(self.y)))
+    def __hash__(self):
+        x = self.x
+        y = self.y
+        # Cantors Enumeration of Pairs
+        n = ((x + y ) * (x + y + 1) / 2) + y
+        return int(n)
+    def __eq__(self, other):
+        return (self.x == other.x) and (self.y == other.y)
+
 
 class Path:
     """
@@ -81,3 +90,19 @@ class Path:
         for item in self.unorder_hist:
             loc_log += str(item)
         return path_str + "\n" + loc_log + "\n" + cloc
+    def findXsections(self, otherPath):
+        """
+        returns a list of all points at which the two pathes intersect
+        """
+        return self.unorder_hist & otherPath.unorder_hist
+    def get_time_to_point(self, point):
+        """
+        returns distance to first instance of point
+        """
+        dist = 0
+        for node in self.order_hist:
+            if point == node:
+                return dist
+            dist += 1
+        return -1
+
