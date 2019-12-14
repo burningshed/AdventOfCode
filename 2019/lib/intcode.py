@@ -9,16 +9,70 @@ note: writing the dictionary out would have been clearer actually
 
 # TODO: figure out how to do this
 OP_DICT = {
-    1: intcode.add,
-    2: intcode.mult,
-    3: intcode.get_input,
-    4: intcode.get_output
+    1: intcode_add,
+    2: intcode_mult,
+    3: intcode_get_input,
+    4: intcode_get_output
+    99: intcode_quit
 }
 
-def intcode_add(code, pointer, argstring):
+
+def intcode_add(code, pointer, argstring=(0, 0, 0), data_stream=None):
     """
-    adds 
+    moves pointer 4 positions forward, adds positions 1 and 2,
+    outputs position 3
     """
+    in1 = code[pointer+1]
+    in2 = code[pointer+2]
+    if not argstring[0]:
+        in1 = code[in1]
+    if not argstring[1]:
+        in2 = code[in2]
+    result = in1 + in2
+    if not argstring[2]:
+        code[pointer+2] = result
+    else:
+        out1 = code[pointer+2]
+        code[out1] = result
+    status = 1
+    return code, status
+
+
+def intcode_mult(code, pointer, argstring=(0, 0, 0), data_stream=None):
+    """
+    moves pointer 4 positions forward, adds positions 1 and 2,
+    outputs position 3
+    """
+    in1 = code[pointer+1]
+    in2 = code[pointer+2]
+    if not argstring[0]:
+        in1 = code[in1]
+    if not argstring[1]:
+        in2 = code[in2]
+    result = in1 * in2
+    if not argstring[2]:
+        code[pointer+2] = result
+    else:
+        out1 = code[pointer+2]
+        code[out1] = result
+    status = 1
+    return code, status
+
+
+def intcode_get_input(code, pointer, argstring):
+    status = 1
+    return code, status
+
+
+def intcode_get_output(code, pointer, argstring):
+    status = 1
+    return code, status
+
+
+def intcode_exit(code, pointer, argstring, data_stream):
+    return code, 0
+
+
 
 
 
@@ -39,7 +93,10 @@ class int_computer():
         """
         instruction_str = self.code[self.pointer]
         opcode = instruction_str[-2:]
-        print(opcode)
+        # intcode operations format:
+        # intcode_op(code, pointer, argstring, datastream)
+        self.code, status = OP_DICT[opcode](self.code, self.pointer,
+                                            argstring, datastream)
 
     def run_code(self, code=None):
         """
