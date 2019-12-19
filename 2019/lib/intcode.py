@@ -12,6 +12,17 @@ note: writing the dictionary out would have been clearer actually
 
 
 
+class fixed_input:
+    def __init__(self, data):
+        self.data = data
+        self.pointer = 0
+    def next(self):
+        entry = self.data[self.pointer]
+        self.pointer += 1
+        if self.pointer >= len(self.data):
+            self.pointer = 0
+        return entry
+
 
 
 
@@ -19,10 +30,13 @@ class int_computer():
     """
     operates on intcodes per Advent of Code 2019 - Day 2
     """
-    def __init__(self, init_code):
+    def __init__(self, init_code, 
+     input_stream=None, output_stream=print):
         """
         Initialize with some intcode
         """
+        self.output_stream=output_stream
+        self.intput_stream=input_stream
         self.code = init_code
         self.pointer = 0
         self.OP_DICT = {
@@ -76,11 +90,22 @@ class int_computer():
         return 1
 
     def intcode_get_input(self, argstring):
+        STEP_SIZE = 2
         status = 1
+        loc = int(self.code[self.pointer+1])
+        if not argstring[0]:
+            loc = self.pointer+1
+        in1 = self.input_stream.next()
+        code[loc] = in1
         return status
 
     def intcode_get_output(self, argstring):
+        STEP_SIZE = 3
         status = 1
+        loc = int(self.code[self.pointer+1])
+        if not argstring[0]:
+            loc = self.pointer+1
+        self.output_stream(self.code[loc])
         return status
 
     def intcode_quit(self, argstring):
