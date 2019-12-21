@@ -20,6 +20,8 @@ for line in input:
 def day5p1(puz_in):
     stream = intcode.fixed_input('1')
     puz_sol = intcode.int_computer(puz_in, stream)
-    puz_sol.run_code()
+    print(puz_sol.run_code())
     return puz_sol.get_code()
+
+testcode1 = ['99']
 print(day5p1(code))

@@ -36,7 +36,7 @@ class int_computer():
         Initialize with some intcode
         """
         self.output_stream=output_stream
-        self.intput_stream=input_stream
+        self.input_stream=input_stream
         self.code = init_code
         self.pointer = 0
         self.OP_DICT = {
@@ -96,16 +96,18 @@ class int_computer():
         if not argstring[0]:
             loc = self.pointer+1
         in1 = self.input_stream.next()
-        code[loc] = in1
+        self.code[loc] = in1
+        self.pointer += STEP_SIZE
         return status
 
     def intcode_get_output(self, argstring):
-        STEP_SIZE = 3
+        STEP_SIZE = 2
         status = 1
         loc = int(self.code[self.pointer+1])
         if not argstring[0]:
             loc = self.pointer+1
         self.output_stream(self.code[loc])
+        self.pointer += STEP_SIZE
         return status
 
     def intcode_quit(self, argstring):
@@ -121,7 +123,10 @@ class int_computer():
         # define argstring here
         # default
         argstring = (0, 0, 0)
-        status = self.OP_DICT[int(opcode)](argstring)
+        try:
+            status = self.OP_DICT[int(opcode)](argstring)
+        except KeyError:
+            return self.pointer, self.code[self.pointer:self.pointer+5]
         return status
 
     def run_code(self):
@@ -142,7 +147,9 @@ if __name__ == "__main__":
     testCase2 = int_computer(
         ["1", '9', '10', '3', '2', '3', '11', '0', '99', '30', '40', '50'])
     testCase1 = int_computer(["1", "1", "1", "1", "99"])
-    print(testCase1.get_code())
-    print(testCase1.run_code())
-    print(testCase1.get_code())
+    testCase3 = int_computer(["3", "1", "4", "1", "99"], fixed_input('9'))
+    print(testCase3.get_code())
+    print(testCase3.run_code())
+    print(testCase3.get_code())
+    testCase3
     #testCase.run_step()
