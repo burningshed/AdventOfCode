@@ -47,20 +47,24 @@ class int_computer():
             99: self.intcode_quit
         }
  
-    def intcode_add(self, argstring=(0, 0, 0)):
+    def intcode_add(self, args=[0]):
         """
         moves pointer 4 positions forward, adds positions 1 and 2,
         outputs position 3
         """
         STEP_SIZE = 4
+        while len(args) < STEP_SIZE:
+            args.append(0)
+
         in1 = int(self.code[self.pointer+1])
         in2 = int(self.code[self.pointer+2])
-        if not argstring[0]:
+        # arg == 0
+        if not args[0]:
             in1 = int(self.code[in1])
-        if not argstring[1]:
+        if not args[1]:
             in2 = int(self.code[in2])
             result = in1 + in2
-        if not argstring[2]:
+        if not args[2]:
             out1 = int(self.code[self.pointer+2])
             self.code[out1] = str(result)
         else:
@@ -68,20 +72,22 @@ class int_computer():
         self.pointer += STEP_SIZE
         return 1
 
-    def intcode_mult(self, argstring):
+    def intcode_mult(self, args=[0]):
         """
         moves pointer 4 positions forward, multiplies positions 1 and 2,
         outputs position 3
         """
         STEP_SIZE = 4
+        while len(args) < STEP_SIZE:
+            args.append(0)
         in1 = int(self.code[self.pointer+1])
         in2 = int(self.code[self.pointer+2])
-        if not argstring[0]:
+        if not args[0]:
             in1 = int(self.code[in1])
-        if not argstring[1]:
+        if not args[1]:
             in2 = int(self.code[in2])
             result = in1 * in2
-        if not argstring[2]:
+        if args[2]:
             out1 = int(self.code[self.pointer+2])
             self.code[out1] = str(result)
         else:
@@ -89,28 +95,35 @@ class int_computer():
         self.pointer += STEP_SIZE
         return 1
 
-    def intcode_get_input(self, argstring):
+    def intcode_get_input(self, args=[0]):
         STEP_SIZE = 2
+        while len(args) < STEP_SIZE:
+            args.append(0)
         status = 1
+        # loc is value of code at position pointer
         loc = int(self.code[self.pointer+1])
-        if not argstring[0]:
+        # args == 1
+        if args[0]:
+            # location is pointer + 1
             loc = self.pointer+1
         in1 = self.input_stream.next()
         self.code[loc] = in1
         self.pointer += STEP_SIZE
         return status
 
-    def intcode_get_output(self, argstring):
+    def intcode_get_output(self, args=[0]):
         STEP_SIZE = 2
+        while len(args) < STEP_SIZE:
+            args.append(0)
         status = 1
         loc = int(self.code[self.pointer+1])
-        if not argstring[0]:
+        if args[0]:
             loc = self.pointer+1
         self.output_stream(self.code[loc])
         self.pointer += STEP_SIZE
         return status
 
-    def intcode_quit(self, argstring):
+    def intcode_quit(self, args):
         return 0
 
    
@@ -120,13 +133,15 @@ class int_computer():
         """
         instruction_str = self.code[self.pointer]
         opcode = instruction_str[-2:]
-        # define argstring here
+        # define args here
         # default
-        argstring = (0, 0, 0)
+        argstring = instruction_str[:-2]
+        arglist = list(argstring)
+        args = [int(x) for x in arglist]
         try:
-            status = self.OP_DICT[int(opcode)](argstring)
-        except KeyError:
-            return self.pointer, self.code[self.pointer:self.pointer+5]
+            status = self.OP_DICT[int(opcode)](args)
+        except:
+            return self.pointer, self.code[self.pointer]
         return status
 
     def run_code(self):
@@ -151,5 +166,4 @@ if __name__ == "__main__":
     print(testCase3.get_code())
     print(testCase3.run_code())
     print(testCase3.get_code())
-    testCase3
     #testCase.run_step()
