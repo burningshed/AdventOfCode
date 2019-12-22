@@ -27,19 +27,19 @@ class int_computer():
     """
     operates on intcodes per Advent of Code 2019 - Day 2
     """
-    OP_KEY = {
-        1: (self.debug, 4),
-        2: (self.debug, 4),
-        3: (self.debug, 2),
-        4: (self.debug, 2),
-        88: (self.debug, 1),
-        99: (self.terminate, 0)
-    }
     def __init__(self, code):
         self.code = code
         self.pointer = 0
+        self.OP_KEY = {
+            1: (self.debug, 4),
+            2: (self.debug, 4),
+            3: (self.debug, 2),
+            4: (self.debug, 2),
+            88: (self.debug, 1),
+            99: (self.terminate, 0)
+        }
 
-    def terminate(self):
+    def terminate(self, args):
         return 0
 
     def run_code(self):
@@ -50,16 +50,20 @@ class int_computer():
     def intcode_operation(self):
         """ handle the operation """
         opcode, arglist = self.intcode_blk_parse()
-        retVal = self.OP_KEY[int(opcode)][0]()
+        retVal = self.OP_KEY[int(opcode)][0](arglist)
         self.pointer += self.OP_KEY[int(opcode)][1]
         return retVal
 
     def debug(self, args):
-        print("opcode: {}".format(self.code[self.pointer]))
-        print("Param 1: {}, Arg: {}".format(self.code[self.pointer+1], args[0]))
-        print("Param 2: {}, Arg: {}".format(self.code[self.pointer+2], args[1]))
-        print("Param 3: {}, Arg: {}".format(self.code[self.pointer+3], args[2]))
-        return 1
+        try:
+            print("opcode: {}".format(self.code[self.pointer]))
+            print("Param 1: {}, Arg: {}".format(self.code[self.pointer+1], args[0]))
+            print("Param 2: {}, Arg: {}".format(self.code[self.pointer+2], args[1]))
+            print("Param 3: {}, Arg: {}".format(self.code[self.pointer+3], args[2]))
+            return 1
+        except IndexError:
+            print("No More Parameters")
+            return 1
 
     def intcode_blk_parse(self):
         """ get opcode and arglist from current memory location """
@@ -76,6 +80,23 @@ class int_computer():
 
         return opcode, arglist
 
+    def from_param(self, param_pointer, arg):
+        val = self.code[param_pointer]
+        if arg == 0:
+            val = self.code[int(val)]
+        return val
+
+    def to_param(self, param_pointer, new_val):
+        loc = self.code[param_pointer]
+        self.code[int(loc)] = new_val
+
+    def intcode_add(self, args):
+        val1 = from_param(self.pointer+1, args[0])
+        val2 = from_param(self.pointer+2, args[1])
+
+        to_param(self.pointer+3, val1+val2)
+
+
 
 if __name__ == "__main__":
     def test_opcode_parser():
@@ -83,7 +104,7 @@ if __name__ == "__main__":
                                '10188', '11088', '11188', '99']
         opcode_parse_tests2 = ['8', '108', '1008', '1108', '10008',
                                '10108', '11008', '11108', '99']
-        tester = int_computer(opcode_parse_tests2)
+        tester = int_computer(opcode_parse_tests1)
         print(tester.code)
         tester.run_code()
         print(tester.code)
