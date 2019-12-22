@@ -42,13 +42,21 @@ class int_computer():
             2: self.intcode_mult,
             3: self.intcode_get_input,
             4: self.intcode_print,
+            5: self.intcode_jump_t,
+            6: self.intcode_jump_f,
+            7: self.intcode_less_than,
+            8: self.intcode_equals,
             88: self.debug,
             99: self.terminate
         }
 
+    # Quit
     def terminate(self, args):
         return -1
 
+    ############################
+    # Core Functionality
+    ############################
     def run_code(self):
         status = 1
         while status >= 0:
@@ -61,16 +69,6 @@ class int_computer():
         self.pointer += retVal
         return retVal
 
-    def debug(self, args):
-        try:
-            print("opcode: {}".format(self.code[self.pointer]))
-            print("Param 1: {}, Arg: {}".format(self.code[self.pointer+1], args[0]))
-            print("Param 2: {}, Arg: {}".format(self.code[self.pointer+2], args[1]))
-            print("Param 3: {}, Arg: {}".format(self.code[self.pointer+3], args[2]))
-            return 1
-        except IndexError:
-            print("No More Parameters")
-            return 1
 
     def intcode_blk_parse(self):
         """ get opcode and arglist from current memory location """
@@ -97,6 +95,10 @@ class int_computer():
         loc = self.code[param_pointer]
         self.code[int(loc)] = new_val
 
+    #######################################
+    # Intcode Operations
+    #######################################
+    # 1
     def intcode_add(self, args):
         val1 = self.from_param(self.pointer+1, args[0])
         val2 = self.from_param(self.pointer+2, args[1])
@@ -104,6 +106,7 @@ class int_computer():
         self.to_param(self.pointer+3, str(int(val1)+int(val2)))
         return 4
 
+    # 2
     def intcode_mult(self, args):
         val1 = self.from_param(self.pointer+1, args[0])
         val2 = self.from_param(self.pointer+2, args[1])
@@ -111,17 +114,78 @@ class int_computer():
         self.to_param(self.pointer+3, str(int(val1)*int(val2)))
         return 4
 
+    # 3
     def intcode_get_input(self, args):
         # get input from user
-        val = 1
+        val = 5
         # write the input to position
         self.to_param(self.pointer+1, val)
         return 2
 
+    # 4
     def intcode_print(self, args):
         val = self.from_param(self.pointer+1, args[0])
         status = self.print_func(val)
         return status
+
+    # 5
+    def intcode_jump_t(self, args):
+        # if param 1 T, goto p2
+        val = int(self.from_param(self.pointer+1, args[0]))
+        if val != 0:
+            self.pointer = int(self.from_param(self.pointer+2, args[1]))
+            return 0
+        # else increment 3
+        return 3
+
+    # 6
+    def intcode_jump_f(self, args):
+        # if param 1 F, goto p2
+        val = int(self.from_param(self.pointer+1, args[0]))
+        if val == 0:
+            self.pointer = int(self.from_param(self.pointer+2, args[1]))
+            return 0
+        # else increment 3
+        return 3
+
+    # 7
+    def intcode_less_than(self, args):
+        # if p1 < p2, store 1 at p3
+        val1 = int(self.from_param(self.pointer+1, args[0]))
+        val2 = int(self.from_param(self.pointer+2, args[1]))
+        if val1 < val2:
+            truth='1'
+        else:
+            truth='0'
+        self.to_param(self.pointer+3, truth)
+        return 4
+
+    # 8
+    def intcode_equals(self, args):
+        # if p1 = p2, store 1 at p3
+        val1 = int(self.from_param(self.pointer+1, args[0]))
+        val2 = int(self.from_param(self.pointer+2, args[1]))
+        if val1 == val2:
+            truth='1'
+        else:
+            truth='0'
+        self.to_param(self.pointer+3, truth)
+        return 4
+
+    ########################################
+    # Testing
+    ########################################
+    def debug(self, args):
+        try:
+            print("opcode: {}".format(self.code[self.pointer]))
+            print("Param 1: {}, Arg: {}".format(self.code[self.pointer+1], args[0]))
+            print("Param 2: {}, Arg: {}".format(self.code[self.pointer+2], args[1]))
+            print("Param 3: {}, Arg: {}".format(self.code[self.pointer+3], args[2]))
+            return 1
+        except IndexError:
+            print("No More Parameters")
+            return 1
+
 
 if __name__ == "__main__":
     def test_opcode_parser():
