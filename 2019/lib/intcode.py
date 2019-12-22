@@ -11,12 +11,12 @@ note: writing the dictionary out would have been clearer actually
 
 def std_print(val):
     print(val)
-    return 1
+    return 2
 def diag_print(val):
     if val == '0':
-        return 1
+        return 2
     print(val)
-    return 0
+    return -1
 
 class fixed_input:
     def __init__(self, data):
@@ -38,27 +38,27 @@ class int_computer():
         self.code = code
         self.pointer = 0
         self.OP_KEY = {
-            1: (self.intcode_add, 4),
-            2: (self.intcode_mult, 4),
-            3: (self.intcode_get_input, 2),
-            4: (self.intcode_print, 2),
-            88: (self.debug, 1),
-            99: (self.terminate, 0)
+            1: self.intcode_add,
+            2: self.intcode_mult,
+            3: self.intcode_get_input,
+            4: self.intcode_print,
+            88: self.debug,
+            99: self.terminate
         }
 
     def terminate(self, args):
-        return 0
+        return -1
 
     def run_code(self):
         status = 1
-        while status == 1:
+        while status >= 0:
             status = self.intcode_operation()
 
     def intcode_operation(self):
         """ handle the operation """
         opcode, arglist = self.intcode_blk_parse()
-        retVal = self.OP_KEY[int(opcode)][0](arglist)
-        self.pointer += self.OP_KEY[int(opcode)][1]
+        retVal = self.OP_KEY[int(opcode)](arglist)
+        self.pointer += retVal
         return retVal
 
     def debug(self, args):
@@ -102,21 +102,21 @@ class int_computer():
         val2 = self.from_param(self.pointer+2, args[1])
         # val1 + val2 to param3
         self.to_param(self.pointer+3, str(int(val1)+int(val2)))
-        return 1
+        return 4
 
     def intcode_mult(self, args):
         val1 = self.from_param(self.pointer+1, args[0])
         val2 = self.from_param(self.pointer+2, args[1])
         # val1 * val2 to param3
         self.to_param(self.pointer+3, str(int(val1)*int(val2)))
-        return 1
+        return 4
 
     def intcode_get_input(self, args):
         # get input from user
         val = 1
         # write the input to position
         self.to_param(self.pointer+1, val)
-        return 1
+        return 2
 
     def intcode_print(self, args):
         val = self.from_param(self.pointer+1, args[0])
