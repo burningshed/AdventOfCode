@@ -24,22 +24,12 @@ def day5p1(puz_in):
 
 
 def day5p1_diag(puz_in):
-    stream = intcode.fixed_input('1')
-    puz_sol = intcode.int_computer(puz_in, stream, print, True)
-    print(puz_sol.get_code())
-    puz_sol.run_diag()
-    ret_code = puz_sol.get_code()
-    num_term = 0
-    for term in ret_code:
-        if (num_term % 10) == 0:
-            print(term)
-        else:
-            print(term, end=" ")
-        num_term += 1
+    puz_sol = intcode.int_computer(puz_in, intcode.diag_print)
+    puz_sol.run_code()
 
 def day5p1_diag2(puz_in):
     stream = intcode.fixed_input('1')
     puz_sol = intcode.int_computer(puz_in, stream)
     print(puz_sol.run_code_d2())
 
-day5p1(code)
+day5p1_diag(code)

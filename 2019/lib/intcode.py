@@ -9,8 +9,14 @@ note: writing the dictionary out would have been clearer actually
 
 # TODO: figure out how to do this
 
-
-
+def std_print(val):
+    print(val)
+    return 1
+def diag_print(val):
+    if val == '0':
+        return 1
+    print(val)
+    return 0
 
 class fixed_input:
     def __init__(self, data):
@@ -27,14 +33,15 @@ class int_computer():
     """
     operates on intcodes per Advent of Code 2019 - Day 2
     """
-    def __init__(self, code):
+    def __init__(self, code, print_func):
+        self.print_func = print_func
         self.code = code
         self.pointer = 0
         self.OP_KEY = {
-            1: (self.debug, 4),
-            2: (self.debug, 4),
-            3: (self.debug, 2),
-            4: (self.debug, 2),
+            1: (self.intcode_add, 4),
+            2: (self.intcode_mult, 4),
+            3: (self.intcode_get_input, 2),
+            4: (self.intcode_print, 2),
             88: (self.debug, 1),
             99: (self.terminate, 0)
         }
@@ -91,12 +98,30 @@ class int_computer():
         self.code[int(loc)] = new_val
 
     def intcode_add(self, args):
-        val1 = from_param(self.pointer+1, args[0])
-        val2 = from_param(self.pointer+2, args[1])
+        val1 = self.from_param(self.pointer+1, args[0])
+        val2 = self.from_param(self.pointer+2, args[1])
+        # val1 + val2 to param3
+        self.to_param(self.pointer+3, str(int(val1)+int(val2)))
+        return 1
 
-        to_param(self.pointer+3, val1+val2)
+    def intcode_mult(self, args):
+        val1 = self.from_param(self.pointer+1, args[0])
+        val2 = self.from_param(self.pointer+2, args[1])
+        # val1 * val2 to param3
+        self.to_param(self.pointer+3, str(int(val1)*int(val2)))
+        return 1
 
+    def intcode_get_input(self, args):
+        # get input from user
+        val = 1
+        # write the input to position
+        self.to_param(self.pointer+1, val)
+        return 1
 
+    def intcode_print(self, args):
+        val = self.from_param(self.pointer+1, args[0])
+        status = self.print_func(val)
+        return status
 
 if __name__ == "__main__":
     def test_opcode_parser():
@@ -109,7 +134,9 @@ if __name__ == "__main__":
         tester.run_code()
         print(tester.code)
 
-    test_opcode_parser()
-
-
-    
+    def test_addition():
+        addition_tests = ['1', '0', '0', '5', '99', '0']
+        tester = int_computer(addition_tests)
+        print(tester.code)
+        tester.run_code()
+        print(tester.code)

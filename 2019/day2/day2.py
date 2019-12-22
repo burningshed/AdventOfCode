@@ -1,8 +1,6 @@
 """
 Advent of Code - Day 2 - Intcode-1
 """
-import sys
-sys.path.insert(0,"..")
 import intcode
 # Get your puzzle input, and save the file to your computer
 # add the path "C:/PATH/to/File.txt" <- Windows or "/PATH/to/File" <- Unix here
@@ -18,14 +16,13 @@ RawInput = open(FILE_PATH, 'r')
 cur_code = []
 for line in RawInput:
     cur_code = line.split(",")
-cur_code = [int(x) for x in cur_code]
 
 def day2part1(code):
     code[1] = 12
     code[2] = 2
     p1 = intcode.int_computer(code)
     p1.run_code()
-    return p1.get_code()[0]
+    return p1.code[0]
 
 def day2part2_one_pass(p1, cur_test_code, ans):
     p1.run_code(cur_test_code)
@@ -48,5 +45,6 @@ def day2part2(code, ans):
             break
     return noun, verb
 ans = 19690720
-N,V = day2part2(cur_code, ans)
-print("Noun: {}, Verb: {}, Answer: {}".format(N,V,(100*N) + V))
+#N,V = day2part2(cur_code)
+#print("Noun: {}, Verb: {}, Answer: {}".format(N,V,(100*N) + V))
+day2part1(cur_code)
