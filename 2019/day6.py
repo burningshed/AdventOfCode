@@ -15,21 +15,30 @@ RawInput = open(FILE_PATH, 'r')
 # If it is text seperated by newlines
 
 
+Test_Input = "COM)B\nB)C\nC)D\nD)E\nE)F\nB)G\nG)H\nD)I\nE)J\nJ)K\nK)L"
 
-
+print(Test_Input)
 # for each line in the file
 sats = []
 for line in RawInput:
     line = line.rstrip()
     orbitee, orbitor = line.split(')')
     sats.append((orbitee,orbitor))
+test_sats = []
+for line in Test_Input.split('\n'):
+    orbitee, orbitor = line.split(')')
+    test_sats.append((orbitee,orbitor))
+sats = test_sats
 print(len(sats))
 def findCores(satList):
     cores = set()
     leaves = set()
+    # each satPair adds the core to cores, and leaf to leaves
+    # set, so each can only exist in set once
     for satPair in satList:
         cores.add(satPair[0])
         leaves.add(satPair[1])
+    print(len(cores))
     for ele in leaves:
         cores.discard(ele)
     return cores
