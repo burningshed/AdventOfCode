@@ -524,6 +524,9 @@ move 4 from 5 to 4
 move 8 from 8 to 7
 move 1 from 3 to 9"""
 def processor(x):
+    """
+    Process the Input
+    """
     drawing, instruct = x.split("\n\n")
     drawing = drawing.splitlines()
     

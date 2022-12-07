@@ -79,17 +79,6 @@ def processor(x, mes):
 
                 break
             back_pos += 1
-        """
-        if not old_arr[0]:
-            if not old_arr[1]:
-                if not old_arr[2]:
-                    old_arr[2] = cur
-                    continue
-                old_arr[1] = cur
-                continue
-            old_arr[0] = cur
-            continue
-        """
         wasLetter, old_arr = checkor(old_arr, cur)
 
         if wasLetter:
